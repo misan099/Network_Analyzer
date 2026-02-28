@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Network Analyzer | Results</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg: linear-gradient(145deg, #f4f8ff 0%, #ecfbf4 60%, #fff8ef 100%);
+      --panel: rgba(255, 255, 255, 0.92);
+      --text: #12213a;
+      --muted: #4a5a75;
+      --accent: #0f7b64;
+      --accent-2: #1d4a86;
+      --border: #d9e5f4;
+      --shadow: 0 16px 36px rgba(19, 35, 64, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--text);
+      padding: 24px;
+    }
+
+    .wrap {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+      animation: rise 0.45s ease-out;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero {
+      background: linear-gradient(120deg, #112548 0%, #1d3f70 55%, #127760 100%);
+      color: #edf5ff;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .title-row {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    h1 { margin: 0; font-size: clamp(26px, 5vw, 34px); }
+    .meta { margin-top: 8px; color: #d6e6ff; font-size: 14px; }
+
+    .cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      color: #102846;
+      background: #f5fbff;
+      border-radius: 10px;
+      padding: 10px 14px;
+      border: 1px solid #bfd8f8;
+      transition: transform 0.12s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .value {
+      font-size: 32px;
+      line-height: 1;
+      font-weight: 700;
+      color: var(--accent-2);
+    }
+
+    .sections {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, minmax(300px, 1fr));
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      font-size: 19px;
+      color: #11325d;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      overflow: hidden;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #fff;
+    }
+
+    thead { background: #eef4ff; }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid #ecf0f7;
+    }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: #456086; }
+    tr:last-child td { border-bottom: none; }
+
+    .empty {
+      margin: 0;
+      border: 1px dashed #bed0ea;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 14px;
+      color: #5d6d86;
+      background: #f9fbff;
+    }
+
+    @media (max-width: 960px) {
+      .grid { grid-template-columns: repeat(2, minmax(150px, 1fr)); }
+      .sections { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      body { padding: 14px; }
+      .hero { padding: 18px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div class="title-row">
+        <div>
+          <h1>PCAP Analysis Results</h1>
+          <p class="meta">File: <strong>{{ original_filename }}</strong> • Analyzed: {{ analyzed_at }}</p>
+        </div>
+        <nav class="cta" aria-label="Primary actions">
+          <a class="btn" href="/download/{{ run_id }}/json">Download JSON</a>
+          <a class="btn" href="/download/{{ run_id }}/txt">Download TXT</a>
+          <a class="btn" href="/">Analyze Another</a>
+        </nav>
+      </div>
+    </section>
+
+    <section class="grid" aria-label="Quick summary">
+      <article class="card">
+        <div class="metric">Total Packets</div>
+        <div class="value">{{ summary.total_packets }}</div>
+      </article>
+      <article class="card">
+        <div class="metric">Unique Source IPs</div>
+        <div class="value">{{ summary.top_source_ips|length }}</div>
+      </article>
+      <article class="card">
+        <div class="metric">Unique Destination IPs</div>
+        <div class="value">{{ summary.top_destination_ips|length }}</div>
+      </article>
+      <article class="card">
+        <div class="metric">Tracked Ports</div>
+        <div class="value">{{ summary.top_destination_ports|length }}</div>
+      </article>
+    </section>
+
+    <section class="sections">
+      <article class="card">
+        <h2 class="section-title">Top Source IPs</h2>
+        {% if summary.top_source_ips %}
+          <table>
+            <thead><tr><th>Source IP</th><th>Count</th></tr></thead>
+            <tbody>
+              {% for ip, c in summary.top_source_ips %}
+                <tr><td>{{ ip }}</td><td>{{ c }}</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="empty">No source IP data available.</p>
+        {% endif %}
+      </article>
+
+      <article class="card">
+        <h2 class="section-title">Top Destination IPs</h2>
+        {% if summary.top_destination_ips %}
+          <table>
+            <thead><tr><th>Destination IP</th><th>Count</th></tr></thead>
+            <tbody>
+              {% for ip, c in summary.top_destination_ips %}
+                <tr><td>{{ ip }}</td><td>{{ c }}</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="empty">No destination IP data available.</p>
+        {% endif %}
+      </article>
+
+      <article class="card">
+        <h2 class="section-title">Top Destination Ports</h2>
+        {% if summary.top_destination_ports %}
+          <table>
+            <thead><tr><th>Port</th><th>Count</th></tr></thead>
+            <tbody>
+              {% for port, c in summary.top_destination_ports %}
+                <tr><td>{{ port }}</td><td>{{ c }}</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="empty">No destination port data available.</p>
+        {% endif %}
+      </article>
+
+      <article class="card">
+        <h2 class="section-title">Top Source-Destination Pairs</h2>
+        {% if summary.top_src_dst_pairs %}
+          <table>
+            <thead><tr><th>Pair</th><th>Count</th></tr></thead>
+            <tbody>
+              {% for pair, c in summary.top_src_dst_pairs %}
+                <tr><td>{{ pair }}</td><td>{{ c }}</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          <p class="empty">No communication pair data available.</p>
+        {% endif %}
+      </article>
+    </section>
+  </main>
+</body>
+</html>

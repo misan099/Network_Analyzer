@@ -5,3 +5,4 @@ __pycache__/
 
 # Don’t upload logs/reports (may contain private IPs)
 reports/
+web/.cache/
