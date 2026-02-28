@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Don’t upload logs/reports (may contain private IPs)
+reports/
